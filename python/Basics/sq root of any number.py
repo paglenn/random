@@ -1,5 +1,6 @@
+#find sq root by bisection
 x=0.1
-epsilon=0.01
+epsilon=0.01 # tolerance
 numGuesses=0
 low=0.0
 high=x

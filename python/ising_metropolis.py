@@ -41,15 +41,7 @@ def colorSpins(s,title,T):
 	plt.savefig('lattice_%.2f.png'%(T))
 
 s = np.random.choice([-1,1],(size,size))
-'''
-def initialize():
-	s = np.empty((size, size))
-	for i in range(size):
-		for j in range(size):
-			s[i,j] = 1 if sample() < 0.5 else -1
-	#colorSpins(s, 'Initial')
-	return s
-'''
+
 # Begin
 #s = initialize()
 for itr in xrange(0, 10000* size**2):
