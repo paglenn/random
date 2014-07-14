@@ -25,7 +25,7 @@ fig = figure()
 font = { 'family': 'normal', 'weight':'bold', 'size':14}
 rc('font', **font)
 
-ax = fig.add_subplot(111, projection='3d')
+#ax = fig.add_subplot(221, projection='3d')
 ax = fig.add_subplot(211, projection='3d')
 for i in range(np.size(U[:,1])):
 	ax.plot_wireframe(T[i],S[i],U[i],color='k')

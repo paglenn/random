@@ -9,7 +9,6 @@ from sys import argv
 
 # user defined modules
 from random_walk_2D_SA import SAW
-from BasicStats import avg, var
 # from lattice_step import random_step
 randn = random.randint
 rand  = random.uniform
@@ -137,39 +136,35 @@ def Metropolis(AA_dict, myAA_dict):
 
 	return 1 if rand(0,1) < boltzmann(Eprime-E0) else 0
 
-def EED(AA_dict):
+def init_plot():
+	global pointSet, bondLines
 
-	first = 0
-	last = N-1
-	for key in AA_dict.keys():
-		if AA_dict[key] == first:
-			x0 = np.array(key)
-		elif AA_dict[key] == last:
-			xn = np.array(key)
+	fig = pp.figure()
+	ax = fig.gca()
+	ax.set_xticks([])
+	ax.set_yticks([])
+	ax.set_xlim(-N-1,N+1)
+	ax.set_ylim(-(N+1),N+1)
+	pp.ion()
+	pointSet, = pp.plot(*zip(*AA_dict.keys()),ls='',marker='o',color='k')
+	pp.xticks([])
+	pp.yticks([])
+	bondLines = []
+	for i in range(N-1):
+		for key1 in AA_dict.keys():
+			if AA_dict[key1] == i: break
 
-	return np.linalg.norm(xn-x0)
+		for key2 in AA_dict.keys():
+			if AA_dict[key2] == i+1 : break
 
-def gyration(AA_dict):
-
-	X = [p[0] for p in AA_dict.keys()]
-	Y = [p[1] for p in AA_dict.keys()]
-
-	return var(X) + var(Y)
-
-
-
-
-
-
-
-
-Energy = [ 0.0 ]
-end_to_end = [ EED(AA_dict) ]
-radGyr = [gyration(AA_dict) ]
+		X = np.linspace(key1[0],key2[0],5)
+		Y = np.linspace(key1[1],key2[1],5)
+		bondLines.append( pp.plot(X,Y,color='k',lw=2)[0] )
 
 # Monte-Carlo
-Nsteps = int(3e5)
-step = 0
+Nsteps = int(2e5)
+step = 1
+init_plot()
 while step < Nsteps:
 	# Choose a random site
 	site = random.choice(AA_dict.keys())
@@ -180,33 +175,12 @@ while step < Nsteps:
 	AA_dict_new = dict(AA_dict)
 	del AA_dict_new[site]
 	AA_dict_new[(x,y)] = resid
-
-	if AA_dict != AA_dict_new:
-		#Metropolis acceptance criteria
-		if Metropolis(AA_dict, AA_dict_new):
-			AA_dict = AA_dict_new
-
 	step += 1
 
-	if step % 10000 == 0:
-		Energy.append(energy(AA_dict) )
-		end_to_end.append(EED(AA_dict) )
-		radGyr.append(gyration(AA_dict) )
+	#Metropolis acceptance criteria
+	if Metropolis(AA_dict, AA_dict_new):
+		AA_dict = AA_dict_new
 
 
+	update_plot(AA_dict)
 
-TS = range(0,Nsteps+1,10000)
-pp.subplot(3,1,1)
-pp.plot(TS,Energy)
-pp.ylabel('Energy')
-
-pp.subplot(3,1,2)
-pp.plot(TS,end_to_end)
-pp.ylabel('end-to-end distance')
-
-pp.subplot(3,1,3)
-pp.plot(TS,radGyr)
-pp.ylabel('radius of gyration')
-
-pp.xlabel('Timestep')
-pp.show()
