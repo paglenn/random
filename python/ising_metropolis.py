@@ -1,13 +1,21 @@
-# ising_metropolis.py
-# implementation of pseudocode from Schroeder, 2000
 # Paul Glenn
+# python ising_metropolis.py [temperature = 1] [latticeSize = 20]
+# implementation of pseudocode from Schroeder, 2000
 
 import numpy as np
 from numpy.random import sample
 from sys import argv
-assert len(argv) != 1
-T  = float(argv[1])
-size = 20 #chain length of lattice
+
+argc = len(argv) -1
+
+if argc == 0:
+	print 'Usage: python ising_metropolis.py [temperature]'
+	T = 1.
+else:
+	T  = float(argv[1])
+
+if argc == 2: size = int(argv[2])
+else: size = 20 #chain length of lattice
 
 def deltaU(i,j,s):
 	size = s.shape[0]

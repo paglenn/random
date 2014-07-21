@@ -1,32 +1,40 @@
+# Paul Glenn -- 14 July 2014
 # Lattice protein folding from chosen primary structure
-# TO DO: SAW instead
-# Paul Glenn
+# usage: python protein_3D_movie.py [initial temperature]
+# note : temperature in units of k_B
 from matplotlib import pyplot as pp
 from mpl_toolkits.mplot3d.axes3d import Axes3D
 import pylab
 import numpy as np
 import random
 import math
-import itertools as it
-from random_walk_3D_SA import SAW
+from sys import argv
 
+##########################
+#User-defined macros
+from random_walk_3D_SA import SAW
 global AA_dict
 randn = random.randint
 rand  = random.uniform
 exp = math.exp
 
 ###################################
-# Initialize primary structure -- suppose alphabetical ordering for fun
+# Parameters
 N = chainLength = 15
 NAA = 20
-PProtein = [randn(0,NAA-1) for x in range(N) ]
-# Interaction matrix J
-J = np.random.choice(np.linspace(-4,-2,100),(NAA,NAA))
-# Set thermodynamic settings
-T = 100 # energy scale in units of k_B
+Nsteps = int(5e5)
+argc = len(argv) - 1
+if argc == 0: T = 100.
+else: T = float(argv[1])
+Tvals = np.linspace(T,0.01,Nsteps)
 boltzmann = lambda dE: exp(-dE/T)
+J = -1*np.ones((NAA,NAA) )
+#J = np.random.choice(np.linspace(-4,-2,100),(NAA,NAA))
 
-#align sites along x direction
+####################################
+# Initial Conditions
+PProtein = [randn(0,NAA-1) for x in range(N) ]
+
 #AA_sites = zip(range(N), N*[int(N/2)],N*[int(N/2)])
 AA_sites = SAW(chainLength)
 AA_dict = dict(zip(AA_sites,range(N)))
@@ -121,66 +129,76 @@ def EED(AA_dict):
 
 	return np.linalg.norm(xn-x0)
 
-def init_plot():
-	global line, bondLines
-	fig = pp.figure()
-	ax = Axes3D(fig)
-	ax.set_xticks([])
-	ax.set_yticks([])
-	ax.set_zticks([])
-	axlim = EED(AA_dict)
-	ax.set_xlim(-axlim,axlim)
-	ax.set_ylim(-axlim,axlim)
-	ax.set_zlim(-axlim,axlim)
-	pp.axis('off')
-	pp.ion()
-	X,Y,Z =  zip(*AA_dict.keys() )
-	line, = pp.plot(X,Y,zs= Z,marker='o',color='b',ls='',ms=5)
-	bondLines = []
-	for i in range(N-1):
+class plot:
+
+	def getBond(self,i):
 		for key1 in AA_dict.keys():
 			if AA_dict[key1] == i: break
 
 		for key2 in AA_dict.keys():
-			if AA_dict[key2] == i+1 : break
+			if AA_dict[key2] == i+1: break
 
-		X = np.linspace(key1[0],key2[0],5)
-		Y = np.linspace(key1[1],key2[1],5)
-		Z = np.linspace(key1[2],key2[2],5)
-		bondLines.append(pp.plot(X,Y,zs=Z,color='k',lw=1.5)[0])
+		X = np.linspace(key1[0],key2[0],2)
+		Y = np.linspace(key1[1],key2[1],2)
+		Z = np.linspace(key1[2],key2[2],2)
 
-def update_plot():
-	global line, bondLines
-	line.set_xdata(zip(*AA_dict.keys())[0])
-	line.set_ydata(zip(*AA_dict.keys())[1])
-	line.set_3d_properties(zip(*AA_dict.keys())[2])
+		return X,Y,Z
 
-	for i in range(N-1):
-		for key1 in AA_dict.keys():
-			if AA_dict[key1] == i: break
+	def getCoordinates(self):
+		# NOTE: zip(*list) is equivalent to unzip()
+		return zip(*AA_dict.keys() )
 
-		for key2 in AA_dict.keys():
-			if AA_dict[key2] == i+1 : break
+	def __init__(self):
+		fig = pp.figure()
+		self.ax = Axes3D(fig)
+		self.ax.set_xticks([])
+		self.ax.set_yticks([])
+		self.ax.set_zticks([])
+		axlim = 1.5*EED(AA_dict)
+		self.ax.set_xlim(-axlim,axlim)
+		self.ax.set_ylim(-axlim,axlim)
+		self.ax.set_zlim(-axlim,axlim)
+		pp.axis('off')
+		pp.ion()
+		X,Y,Z = self.getCoordinates()
+		self.line = pp.plot(X,Y,zs= Z,marker='o',color='b',ls='',ms=5)[0]
+		self.BondLines = []
+		self.textPos = 0.7*axlim
+		text = 't = 0, T = %.2f'%T
+		self.text = self.ax.text(self.textPos,self.textPos,self.textPos,text)
+		for i in range(N-1):
+			X,Y,Z = self.getBond(i)
+			self.BondLines.append(pp.plot(X,Y,zs=Z,color='k',lw=1.5)[0])
 
-		X = np.linspace(key1[0],key2[0],5)
-		Y = np.linspace(key1[1],key2[1],5)
-		Z = np.linspace(key1[2],key2[2],5)
-		bondLines[i].set_xdata(X)
-		bondLines[i].set_ydata(Y)
-		bondLines[i].set_3d_properties(Z)
+	def update(self,t,T):
+		X,Y,Z = self.getCoordinates()
+		self.line.set_xdata(X)
+		self.line.set_ydata(Y)
+		self.line.set_3d_properties(Z)
+		for i in range(N-1):
+			X,Y,Z = self.getBond(i)
+			self.BondLines[i].set_xdata(X)
+			self.BondLines[i].set_ydata(Y)
+			self.BondLines[i].set_3d_properties(Z)
 
-	pp.draw()
-	pp.pause(0.00001)
+		self.text.remove()
+		text = 't = %s, T = %.2f'%(t,T)
+		self.text = self.ax.text(self.textPos,self.textPos,self.textPos,text)
+		pp.draw()
+		pp.pause(0.00001)
+
+	def SaveFinalImage(self):
+		pp.savefig("protein_3D.png")
 
 ####################################
-# Monte-Carlo steps
-Nsteps = int(5000)
+# Monte-Carlo loop
 step = 0
-init_plot()
+movie = plot()
 while step < Nsteps:
 	# Choose a random site
 	site = random.choice(AA_dict.keys())
 	resid = AA_dict[site]
+	T = Tvals[step]
 
 	# Find valid conformation
 	x,y,z = move_AA(*site,myAA_dict = AA_dict)
@@ -192,8 +210,10 @@ while step < Nsteps:
 	#Metropolis acceptance criteria
 	if Metropolis(AA_dict, AA_dict_new):
 		AA_dict = AA_dict_new
-
-		update_plot()
+		if step%10 == 0:
+			movie.update(step,T)
 
 	step += 1
+
+movie.SaveFinalImage()
 

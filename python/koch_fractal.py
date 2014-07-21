@@ -1,5 +1,5 @@
 # Paul Glenn -- 21 July 2014
-# Draw a Koch curve on the interval [0,1].
+# Draw a Koch curve on the interval [x_lower,x_upper].
 # Usage: python koch_fractal.py [num_iterations =  1] [x_lower = 0] [x_upper = 1]
 
 # Module imports

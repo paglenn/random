@@ -1,8 +1,11 @@
+# Paul Glenn -- 18 July 2014
+# usage: python cluster_DLA.py [num steps]
+# Create a diffusion-limited aggregation cluster.
+
 #module imports
 import numpy as np
 import matplotlib.pyplot as pp
 from random_walk_2D import random_step
-import itertools as it
 import math as m
 from sys import argv
 #user defined imports
@@ -12,7 +15,7 @@ if argc > 1: Nsteps = int(argv[1])
 
 # Parameters
 a = 0.5 # lattice constant
-latticeSize = L = 81
+latticeSize = L = 161
 axlim = a*L/2
 axis = range(-L/2,L/2+1)
 seed = (0,0)
@@ -58,7 +61,7 @@ Y = [p[1] for p in points ]
 pp.plot(X,Y,'k.')
 pp.xlim(-axlim,axlim)
 pp.ylim(-axlim,axlim)
-pp.text(0.8*axlim, -0.8*axlim, 'N = %s'%len(X))
+pp.text(0.7*axlim, -0.8*axlim, 'N = %s'%len(X))
 pp.savefig("cluster_DLA.png")
 
 
