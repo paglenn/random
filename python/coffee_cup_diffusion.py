@@ -1,3 +1,9 @@
+# Paul Glenn -- 14 July 2014
+# a simple diffusion simulation.
+# computes the diffusion constant.
+# usage: python coffee_cup_diffusion.py
+
+
 #Module imports
 import numpy as np
 import matplotlib.pyplot as pp

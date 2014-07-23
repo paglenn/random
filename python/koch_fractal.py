@@ -44,7 +44,7 @@ def KochIteration(xi,xf, level):
 
 
 KochIteration(xi,xf, numIterations)
-pp.text(0.6*pp.xlim()[1],0.7*pp.ylim()[1],'%i iterations'%numIterations)
+pp.text(0.6*pp.xlim()[1],0.9*pp.ylim()[1],'%i iterations'%numIterations)
 pp.axis('equal')
 #pp.show()
 pp.savefig('koch_fractal.png')

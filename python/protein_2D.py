@@ -21,6 +21,8 @@ exp = math.exp
 global N, AA_dict
 
 N = chainLength = 15
+Nsteps = int(3e5)
+fs = 1000 # frameskip
 #PProtein = [randn(0,19) for x in range(N) ]
 PProtein = np.random.randint(0,19,N)
 # Interaction matrix J
@@ -74,6 +76,7 @@ def energy(myAA_dict = AA_dict):
 	return E
 
 
+
 def move_AA(x0,y0):
 
 	site = (x0,y0)
@@ -81,55 +84,24 @@ def move_AA(x0,y0):
 	x = x0
 	y = y0
 
-	directions = [(1,1),(1,-1),(-1,1),(-1,-1)]
-	#directions = [(1,0),(0,-1),(-1,0),(0,1)]
-	random.shuffle(directions)
-	successful_move = 0
-	for direction in directions:
-		x = x0 + direction[0]
-		y = y0 + direction[1]
-		flag = (x,y) in AA_dict.keys()
-		flag = flag or (x == -1 or x == N)
-		flag = flag or (y == -1 or y == N)
-		if flag: continue
-		if (x,y) in AA_dict.keys(): continue
-		if x == -1 or x == N: continue
-		if y == -1 or y == N: continue
-		AA_dict_copy = dict(AA_dict)
-		del AA_dict_copy[site]
-		AA_dict_copy[(x,y)] = resid
-		newContacts = getContacts((x,y),AA_dict_copy)
-		if not all([ww in newContacts for ww in bonds]): continue
+	directions = dict([(1,(1,1)),(2,(1,-1)),(3,(-1,1)),(4,(-1,-1))])
+	dkey = np.random.choice(directions.keys())
+	direction = directions[dkey]
+	x = x0+direction[0]
+	y = y0+direction[1]
 
-		successful_move = 1
-		break
-	if not successful_move:
-		x = x0
-		y = y0
-
-	return x,y
-'''
-
-def check_move(oldSite,newSite):
-
-	oldBonds = getBondsList(oldSite,AA_dict)
+	flag = (x,y) in AA_dict.keys()
+	flag = flag or (x == -1 or x == N)
+	flag = flag or (y == -1 or y == N)
 
 	AA_dict_copy = dict(AA_dict)
-	AA_dict_copy[newSite] = AA_dict_copy.pop(oldSite)
-	newContacts = getContacts(newSite, AA_dict_copy)
+	del AA_dict_copy[(x0,y0)]
+	AA_dict_copy[(x,y)] = AA_dict[(x0,y0)]
+	newContacts = getContacts((x,y),AA_dict_copy)
+	if not all([ww in newContacts for ww in bonds]):
+		flag = 1
 
-	flags = []
-	flags.append(newSite in AA_dict.keys())
-	flags.append(-1 in newSite or N in newSite)
-	flags.append(not all([ww in newContacts for ww in oldBonds]) )
-
-	PathIsGood = all([f == False for f in flags] )
-
-	return	PathIsGood
-'''
-
-
-
+	return (x,y) if flag == 0 else (x0,y0)
 
 def Metropolis(AA_dict, myAA_dict):
 	E0 = energy(AA_dict)
@@ -137,7 +109,7 @@ def Metropolis(AA_dict, myAA_dict):
 
 	return 1 if rand(0,1) < boltzmann(Eprime-E0) else 0
 
-def EED(AA_dict):
+def eed(AA_dict):
 
 	first = 0
 	last = N-1
@@ -157,18 +129,11 @@ def gyration(AA_dict):
 	return var(X) + var(Y)
 
 
-
-
-
-
-
-
 Energy = [ 0.0 ]
-end_to_end = [ EED(AA_dict) ]
+EED = [ eed(AA_dict) ]
 radGyr = [gyration(AA_dict) ]
 
 # Monte-Carlo
-Nsteps = int(3e5)
 step = 0
 while step < Nsteps:
 	# Choose a random site
@@ -188,20 +153,20 @@ while step < Nsteps:
 
 	step += 1
 
-	if step % 10000 == 0:
+	if step % fs == 0:
 		Energy.append(energy(AA_dict) )
-		end_to_end.append(EED(AA_dict) )
+		EED.append(eed(AA_dict) )
 		radGyr.append(gyration(AA_dict) )
 
 
 
-TS = range(0,Nsteps+1,10000)
+TS = range(0,Nsteps+1,fs)
 pp.subplot(3,1,1)
 pp.plot(TS,Energy)
 pp.ylabel('Energy')
 
 pp.subplot(3,1,2)
-pp.plot(TS,end_to_end)
+pp.plot(TS,EED)
 pp.ylabel('end-to-end distance')
 
 pp.subplot(3,1,3)

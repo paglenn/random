@@ -32,6 +32,7 @@ def SAW ( Nsteps):
 
 	return visited_sites
 
+'''
 stepSequence = SAW(10)
 from mpl_toolkits.mplot3d.axes3d import Axes3D
 import matplotlib.pyplot as pp
@@ -42,7 +43,7 @@ Y = [p[1] for p in stepSequence ]
 Z = [p[2] for p in stepSequence ]
 pp.plot(X,Y,zs=Z)
 pp.show()
-
+'''
 
 
 

@@ -18,11 +18,11 @@ print np.size(k), np.size(x)
 u = np.exp(-x**2)
 ut = fft(u)
 
-'''
 plot(fftshift(k), abs(fftshift(ut)))
 show()
-'''
 
+
+'''
 sech = lambda x: 1.0/np.cosh(x)
 
 u = sech(x)
@@ -37,4 +37,4 @@ ks = fftshift(k)
 plot(x, ud, 'r', x, uds, 'mo')
 show()
 
-
+'''
