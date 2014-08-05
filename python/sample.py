@@ -1,6 +1,6 @@
+#!/usr/bin/env python
 import time
 from datetime import date, timedelta
 
-for i in range(1000):
-	print "The current CPU time in seconds is: ", time.clock()
+print("The current CPU time in seconds is: ", time.clock())
 

@@ -24,8 +24,8 @@ xf = np.array([x_upper,0.])
 
 # Recursive function
 def KochIteration(xi,xf, level):
-	cos = m.cos(m.pi/3.)
-	sin = m.sin(m.pi/3.)
+	cos = m.cos(m.pi/3)
+	sin = m.sin(m.pi/3)
 	xyRotation = np.array([[cos, -sin],[sin, cos]])
 	if level == 0:
 		X = np.linspace(xi[0],xf[0],2)

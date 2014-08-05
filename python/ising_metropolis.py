@@ -9,7 +9,7 @@ from sys import argv
 argc = len(argv) -1
 
 if argc == 0:
-	print 'Usage: python ising_metropolis.py [temperature]'
+	print('Usage: python ising_metropolis.py [temperature]')
 	T = 1.
 else:
 	T  = float(argv[1])

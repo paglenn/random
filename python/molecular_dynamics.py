@@ -79,16 +79,6 @@ def F(i,n):
 			Fi += - (U(r + dr) - U(r - dr) ) /(2* dr)
 	return Fi
 
-def scatter(n):
-	# elastic scattering
-	global R, V
-	for i in range(N):
-		for j in range(i+1,N):
-			r = np.linalg.norm(R[i,n] - R[j,n])
-			if r <= sigma:
-				V[i,n] = -V[i,n]
-				V[j,n] = - V[j,n]
-
 def verlet_step(n):
 	# computes new positions and velocities for time step n+1
 	global R,V
@@ -98,7 +88,6 @@ def verlet_step(n):
 		R[i][n+1] = 2*R[i][n] - R[i][n-1] + a * (dt**2.)
 		V[i][n] = ( R[i][n+1] - R[i][n-1]) / (2*dt)
 
-	#scatter(n)
 
 	# Periodic Boundary Conditions
 	for i in range(N):

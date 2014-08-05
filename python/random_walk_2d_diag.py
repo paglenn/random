@@ -4,7 +4,7 @@ from sys import argv
 import matplotlib.cm as cm
 import math
 
-if len(argv) == 1: N = int (raw_input("input # steps: ") )
+if len(argv) == 1: N = int (input("input # steps: ") )
 else: N = int( argv[1] )
 num_trials = 100
 S = []
@@ -34,8 +34,8 @@ for i in range(num_trials):
 	pl.plot(X[-1],Y[-1],'bo')
 	S.append(math.sqrt(x**2+y**2))
 
-print "average distance: ", 1.*sum(S)/num_trials
-print "predicted: ", math.sqrt(N)
+print("average distance: ", 1.*sum(S)/num_trials)
+print("predicted: ", math.sqrt(N))
 
 pl.title(' Phase space of a 2D random walk')
 pl.xlabel('x')
