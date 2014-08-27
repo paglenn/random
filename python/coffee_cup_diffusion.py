@@ -84,14 +84,3 @@ pp.plot(dDdt.keys(), dDdt.values())
 pp.ylabel('dD/dt')
 pp.show()
 
-
-
-
-
-
-
-
-
-
-
-

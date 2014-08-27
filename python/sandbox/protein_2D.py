@@ -1,5 +1,6 @@
 # Lattice protein folding from primary structure
 # initial conformation created using self-avoiding random walk
+# usage python protein_2D.py [Temperature=10]
 # Paul Glenn
 import numpy as np
 import random
@@ -120,6 +121,7 @@ def gyration(struct):
 	var = stat.variance
 	X = [p[0] for p in struct]
 	Y = [p[1] for p in struct]
+	print(X,Y)
 
 	return var(X) + var(Y)
 

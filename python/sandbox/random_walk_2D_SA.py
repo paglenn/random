@@ -29,6 +29,7 @@ def SAW(Nsteps):
 				goodPath = 1
 
 	return visited_sites
+print(SAW(10))
 '''
 start_time = time.time()
 for i in range(10000): P = SAW(10)

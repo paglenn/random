@@ -1,5 +1,5 @@
 #include<iostream>
-#include"num_int-lib.h"
+#include"num_int_lib.h"
 using namespace std;
 
 // Here we define various functions called by the main program
