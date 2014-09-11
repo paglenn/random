@@ -4,3 +4,9 @@
 *.pyc
 *.zip
 .DS_Store
+python/.DS_Store
+*.dat
+*.out
+out
+window*
+*.xml

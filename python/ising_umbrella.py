@@ -7,7 +7,7 @@ import numpy as np
 from numpy.random import sample
 from sys import argv
 if len(argv) < 2:
-	print "Usage: ./a.out [temp]"
+	print("Usage: ./a.out [temp]")
 	quit()
 T  = float(argv[1])
 size = 20 #chain length of lattice
@@ -30,9 +30,8 @@ def deltaU(i,j,s):
 
 #initialize window
 N = size**2
-num_bins = 1000
+num_bins = 100
 w=  N/float(num_bins) # 10 intervals -> 20 simulations
-#passes = int(1e3)  # multiply by N to get num_steps = 400K
 bins= [w + i*w for i in range(num_bins) ]
 freq = [1. for x in range(num_bins) ]
 passes = 10
@@ -90,7 +89,7 @@ import pylab as pl
 #for bin in bins: pl.axvline(bin, color='k', linestyle='solid')
 bins[1:num_bins] = [0.5*(bins[i] + bins[i-1]) for i in range(1,num_bins) ]
 bins[0] /= 2.
-pl.plot(bins,A,'.')
+pl.plot(bins,A)
 pl.xlabel(r'M/$\mu$')
 pl.ylabel('A(T)')
 pl.title('T = %.2f'%(T))
