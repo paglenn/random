@@ -7,7 +7,7 @@
 using namespace std; 
 
 //double Tvals[14] = {0.1,1.0,1.5,2.0,2.1,2.15,2.2,2.269,2.3,2.35,2.4,3.0,4.0,5.0}; 
-const int nT = 50; 
+const int nT = 25; 
 vector<double> Tvals; 
 
 int L = 20; 

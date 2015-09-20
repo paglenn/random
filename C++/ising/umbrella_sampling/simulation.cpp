@@ -12,13 +12,13 @@ const int numWindows = 10;
 vector<double> windows; 
 
 int L = 20; 
-double T = 3.0; 
-double h = 0.1; 
+double T = 1.0; 
+double h = 0.0; 
 double J = 1.0; 
 
-int numSweeps = 10; 
+int numSweeps = 50; 
 int numSteps = L*L*numSweeps; 
-int numPasses = 5000 ; // 500; 
+int numPasses = 500; 
 int sampleRate = L*L;// numSteps/1000; 
 
 TProfile * mag ; 
@@ -48,7 +48,7 @@ int main() {
 		wmin = windows[i] ; 
 		if ( i + 1 < numWindows) wmax = windows[i+1] ; 
 		else wmax = 1.; 
-		wmin -= (i != 0 ) ? 1./50 : 0. ;  
+		wmin -= (i != 0 ) ? 1./400 : 0. ;  
 		
 		for(int p = 0; p < numPasses; p++ ) { 
 			Lattice * system = new Lattice(L,T,J,h) ; 
@@ -67,7 +67,7 @@ int main() {
 					num_acc += acc/numSteps; 
 					//cout<<system->GetM() << endl;
 					//magHist[i]->Fill(system->GetM()); 
-					if ( true /*step%sampleRate == 0*/ ) {
+					if ( true/*step%sampleRate == 0*/ ) {
 						double m = system->GetM() ; 
 						magHist[i]->Fill(m);
 						//cout << "min: " << wmin << "max: " <<  wmax << "m:  " <<  m << endl ;
@@ -96,9 +96,10 @@ void createHistograms() {
 		wmin = windows[i] ; 
 		if ( i + 1 < numWindows) wmax = windows[i+1] ; 
 		else wmax = 1.; 
-		wmin -= (i != 0 ) ? 1./50 : 0. ;  
+		wmin -= (i != 0 ) ? 1./400 : 0. ;  
 
-		magHist[i] = new TH1D(name,name,11, wmin, wmax); 
+		int nbins = (i == 0 ) ? 25 : 26; 
+		magHist[i] = new TH1D(name,name,nbins, wmin, wmax); 
 		//magHist[i] ->SetBit(TH1::kCanRebin); 
 	}
 }

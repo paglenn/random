@@ -20,28 +20,15 @@ class Lattice {
 	int L , numSites ;
 	double h, J ; // reduced coupling constants  
 	int seed;  
+	double M ; // magnetization
 	vector<double> S;	// lattice sites  
 
 	public: 
 	
 		double T, beta ; 
-		Lattice(int sideLength, double temp, double coupling = 1.0, double field = 0.0 ) : 
-			L(sideLength), J(coupling), h(field) , T(temp) 
-		{
 
-			seed = time(0); 
-			srand(seed); 
+		Lattice(int sideLength, double temp, double coupling, double field) ; 
 
-			numSites = L * L; 
-			beta = 1./T; 
-			for(int i = 0; i < numSites; i++) 
-			{
-				S.push_back(2*(rand()%2)-1) ; 
-				//S.push_back(1) ; 
-				//S.push_back(-1); 
-			}
-			
-		}
 		double GetE(); // total dimensionless energy of lattice 
 
 		int  GetRandomSite(); // random site index for mc step 
@@ -63,6 +50,27 @@ class Lattice {
 
 };
 
+Lattice::Lattice(int sideLength, double temp, double coupling = 1.0, double field = 0.0 ) : 
+	L(sideLength), J(coupling), h(field) , T(temp) 
+{
+
+	seed = time(0); 
+	srand(seed); 
+
+	numSites = L * L; 
+	beta = 1./T; 
+	M = 0.; 
+	for(int i = 0; i < numSites; i++) 
+	{
+		S.push_back(2*(rand()%2)-1) ; 
+		//S.push_back(1) ; 
+		//S.push_back(-1); 
+		M += S[i]; 
+	}
+
+
+}
+
 int Lattice::GetSite(int index) { return S.at(index); } 
 
 double Lattice::GetH() {return h; }
@@ -70,13 +78,13 @@ double Lattice::GetH() {return h; }
 double Lattice::GetJ() {return J; }
 
 double Lattice::GetM() { 
-	double m = 0.; 
-	for(int i = 0; i < numSites; i++ ) m += S.at(i); 
-	m /= numSites;
-	return m;
+	return M/numSites; 
 }
 
-void Lattice::FlipSpin(int index) { S.at(index)  *= -1 ; }
+void Lattice::FlipSpin(int index) { 
+	S.at(index)  *= -1 ; 
+	M += 2*S.at(index);  
+}
 
 std::vector<int> Lattice::neighborList(int index ) { 
 	int nbr[4]; 
@@ -90,7 +98,7 @@ std::vector<int> Lattice::neighborList(int index ) {
 }
 
 double Lattice::GetE() {
-	// calculate dimensionless energy 
+	// calculate dimensionless energy beta * E 
 
 	double E = 0;
 

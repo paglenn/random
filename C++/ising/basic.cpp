@@ -7,23 +7,26 @@
 
 using namespace std; 
 
-double T = 0.1; 
+double T = 1.0; 
 //double T = 2.269; 
 //double T = 4.0; 
 int L = 20; 
-double h = 0.0; 
+double h = 1.0; 
 double J = 1.0; 
 
 int numSweeps = 1e4; 
 int numSteps = L*L*numSweeps; 
 int sampleRate = L*L;// numSteps/1000; 
 
+// ROOT histograms (for collecting statistics) 
 TProfile * en_ts ; 
 TProfile * mag_ts ; 
 TProfile * corr; 
 TH1 * en; 
 TH1 * mag; 
 TFile * dataFile = new TFile("basic_data.root", "update"); 
+
+// these functions vary depend on what you are trying to measure! 
 void createHistograms();
 void WriteEventData(Lattice * system, int step) ;  
 void WriteHistograms(); 
@@ -37,6 +40,8 @@ int main() {
 	
 	// usage: Lattice ( box length, temp, coupling = 1., field = 0.0)  
 	Lattice * system = new Lattice(L,T,J,h) ; 
+	//cout << "m: "<< system->GetM() << endl ; 
+	//exit(1); 
 
 	for(int step = 0; step < numSteps; step ++)  { 
 
@@ -46,22 +51,27 @@ int main() {
 		if ( step%sampleRate == 0 ) WriteEventData(system,step);
 	}
 	WriteHistograms(); 
-	return close(); 
+	
+	cout << " final magnetization: " << system->GetM() << endl ; 
+	return close(); // close() returns 0  
 }
 
 void createHistograms() {
+	// initialization of histograms 
 	double beta = 1./T; 
-	en_ts = new TProfile("en_ts","en_ts", numSweeps, 0, numSweeps);
+	char name[15];
+	sprintf(name,"en_ts_%.3f",T); 
+	en_ts = new TProfile(name,name, numSweeps, 0, numSweeps);
 	en_ts->SetBit(TH1::kCanRebin); 
 
 	en = new TH1D("en", "en", L*L, -beta, beta); 
 	en ->SetBit(TH1::kCanRebin); 
 	
-	mag_ts = new TProfile("mag_ts","mag_ts", numSweeps, 0, numSweeps, -1, 1);
+	sprintf(name,"mag_ts_%.3f",T); 
+	mag_ts = new TProfile(name,name, numSweeps, 0, numSweeps, -1, 1);
 	mag_ts->SetBit(TH1::kCanRebin); 
 
-	char name[15];
-	sprintf(name,"corr_%f",T); 
+	sprintf(name,"corr_%.3f",T); 
 	corr = new TProfile(name,name, L/2, 0, L/2) ;
 	corr->SetBit(TH1::kCanRebin); 
 	
@@ -110,7 +120,6 @@ void WriteHistograms() {
 }
 
 int close() {
-		
 	dataFile->Close();
 	return 0; 
 }

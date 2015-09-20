@@ -4,10 +4,9 @@ from subprocess import call
 import parameters as par
 import numpy as np
 import matplotlib.pyplot as plt
-nb = par.num_bins
-params = [par.num_bins,1000*par.T]
-call("./wham"+" -400.0 400.0 %i 0.1 200. 0 metadata.dat wham_output.dat"%(nb),shell=True)
-
+nb = 100
+call("./wham"+" -400.0 400.0 %i 100.0 100.0 0 metadata.dat wham_output.dat"%nb,shell=True)
+'''
 infile = open('wham_output.dat','r')
 M = list()
 A = list()
@@ -23,3 +22,4 @@ plt.plot(M,A)
 plt.title(r'T = %.2f'%par.T)
 plt.savefig('fe.png')
 plt.show()
+'''

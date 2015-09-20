@@ -1,3 +1,5 @@
+// Methods complementary to lattice ising program 
+// 
 #include<vector>
 #include"Lattice.h"
 #include<iostream>

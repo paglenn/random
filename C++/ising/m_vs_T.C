@@ -11,7 +11,7 @@
    Canvas_1->SetFrameBorderMode(0);
    Double_t xAxis[50] = {0.1, 0.178, 0.256, 0.334, 0.412, 0.49, 0.568, 0.646, 0.724, 0.802, 0.88, 0.958, 1.036, 1.114, 1.192, 1.27, 1.348, 1.426, 1.504, 1.582, 1.66, 1.738, 1.816, 1.894, 1.972, 2.05, 2.128, 2.206, 2.284, 2.362, 2.44, 2.518, 2.596, 2.674, 2.752, 2.83, 2.908, 2.986, 3.064, 3.142, 3.22, 3.298, 3.376, 3.454, 3.532, 3.61, 3.688, 3.766, 3.844, 3.922}; 
    
-   TProfile *mag = new TProfile("mag","Average magnetization",49, xAxis   mag->SetBinEntries(1,10);
+   TProfile *mag = new TProfile("mag","m(t = 0) =  1",49, xAxis); mag->SetBinEntries(1,10);
    mag->SetBinEntries(2,10);
    mag->SetBinEntries(3,10);
    mag->SetBinEntries(4,10);
