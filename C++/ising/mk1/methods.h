@@ -9,7 +9,7 @@
 double deltaE(Lattice* system, int index) {
 
 	double dE = 0 ;
-	vector<int> nbrs = system->neighborList(index); 
+	vector<int> nbrs = system->NeighborList(index); 
 	int s_ij = system->GetSite(index);  
 
 	for(int i = 0; i < nbrs.size(); i++) {
@@ -69,7 +69,7 @@ void adjustM(Lattice * system, double target, double tol = 1./100) {
 
 double V_bias(double m , double wmean) { 
 
-	double K = 1.0 ; 
+	double K = 40.0 ; 
 	double diff = m - wmean ; 
 	return 0.5 * K * diff * diff ; 
 
@@ -80,23 +80,19 @@ bool umbrella_mc_step(Lattice* system, double wmin, double wmax ) {
 	int random_index = system->GetRandomSite(); 
 	double wmean = 0.5 * (wmin + wmax ) ; 
 	double m0 = system->GetM() ; 
-	double V_old = V_bias( m0, wmean ) ; 
+	double Vold = V_bias( m0, wmean ) ; 
 
 	double dE = deltaE(system, random_index) ; 
 	double m_new = m0 - 2 * system->GetSite(random_index) ; 
 	double Vnew = V_bias(m_new, wmean) ;  
 	
-	dE += V_new - V_old ; 
+	dE += (Vnew - Vold) ; 
 	bool accepted = false; 
 	if (dE <= 0) accepted = true; 
 	else if ( ranf() <= exp(-dE ) ) accepted = true; 
 
 	if (accepted ) system->FlipSpin(random_index) ; 
 
-	if (m <= wmin || m >= wmax) {
-		accepted = false; 
-		system->FlipSpin(random_index); 
-	}
 
 	return accepted; 
 
